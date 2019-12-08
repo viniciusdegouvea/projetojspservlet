@@ -40,7 +40,7 @@ public class DaoUsuario {
 
 	public List<BeanCursoJSP> listar() throws Exception {
 		List<BeanCursoJSP> lista = new ArrayList<BeanCursoJSP>();
-		String sql = "select * from usuario";
+		String sql = "select * from usuario order by id";
 		PreparedStatement preparedStatement = connection.prepareStatement(sql);
 		ResultSet resultSet = preparedStatement.executeQuery();
 		while (resultSet.next()) {
@@ -95,6 +95,17 @@ public class DaoUsuario {
 			return beanCursoJSP;
 		}
 		return null;
+	}
+	
+	public boolean validarLogin(String login) throws Exception {
+		String sql = "select count(1) as qtd from usuario where login='" + login + "'";
+		
+		PreparedStatement preparedStatement = connection.prepareStatement(sql);
+		ResultSet resultSet = preparedStatement.executeQuery();
+		if (resultSet.next()) {
+			return resultSet.getInt("qtd") <= 0;
+		}
+		return false;
 	}
 
 	public void atualizar(BeanCursoJSP usuario) {

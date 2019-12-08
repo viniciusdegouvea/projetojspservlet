@@ -34,16 +34,15 @@ public class Usuario extends HttpServlet {
 				request.setAttribute("usuarios", daoUsuario.listar());
 				request.setAttribute("count", daoUsuario.count());
 				view.forward(request, response);
-			}
-			else if(acao.equalsIgnoreCase("editar")){
-				BeanCursoJSP beanCursoJSP  =  daoUsuario.consultar(user);
+			} else if (acao.equalsIgnoreCase("editar")) {
+				BeanCursoJSP beanCursoJSP = daoUsuario.consultar(user);
 				RequestDispatcher view = request.getRequestDispatcher("/cadastroUsuario.jsp");
 				request.setAttribute("usuarios", daoUsuario.listar());
 				request.setAttribute("count", daoUsuario.count());
 				request.setAttribute("user", beanCursoJSP);
 				view.forward(request, response);
-				
-			}else if(acao.equalsIgnoreCase("listartodos")) {
+
+			} else if (acao.equalsIgnoreCase("listartodos")) {
 				RequestDispatcher view = request.getRequestDispatcher("/cadastroUsuario.jsp");
 				request.setAttribute("usuarios", daoUsuario.listar());
 				request.setAttribute("count", daoUsuario.count());
@@ -62,18 +61,23 @@ public class Usuario extends HttpServlet {
 		String nome = request.getParameter("nome");
 
 		BeanCursoJSP usuario = new BeanCursoJSP();
-		usuario.setId(!id.isEmpty()? Long.parseLong(id) : 0);
+		usuario.setId(!id.isEmpty() ? Long.parseLong(id) : 0);
 		usuario.setLogin(login);
 		usuario.setSenha(senha);
 		usuario.setNome(nome);
-		
-		if(id == null || id.isEmpty()) {
-			daoUsuario.salvar(usuario);
-		}else {
-			daoUsuario.atualizar(usuario);
-		}
-
 		try {
+			if (id == null || id.isEmpty() && !daoUsuario.validarLogin(login)) {
+				request.setAttribute("msg", "Usuario ja existe com o mesmo login");
+			}
+			
+			if (id == null || id.isEmpty() && daoUsuario.validarLogin(login)) {
+				daoUsuario.salvar(usuario);
+				request.setAttribute("msg", "Usuário cadastrado com sucesso!");
+			} else if(id != null && !id.isEmpty()){
+				daoUsuario.atualizar(usuario);
+				request.setAttribute("msg", "Usuário editado com sucesso!");
+			}
+
 			RequestDispatcher view = request.getRequestDispatcher("cadastroUsuario.jsp");
 			request.setAttribute("usuarios", daoUsuario.listar());
 			request.setAttribute("count", daoUsuario.count());

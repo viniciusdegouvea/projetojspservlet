@@ -193,6 +193,7 @@
 
 							<div class="main-card mb-3 card">
 								<div class="card-body">
+									<h3>${msg}</h3>
 									<h5 class="card-title text-muted">Novo usuário</h5>
 									<form action="salvarUsuario" method="post">
 										<div class="form-row">
